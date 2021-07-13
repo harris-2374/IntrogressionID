@@ -3,6 +3,12 @@ IntrogressionID is a pipeline designed to identify putative sites of introgressi
 where all cattle in the population are homozygous for the reference "cattle-like" allele, and all other Bison samples are homozygous for the alternative "bison-like" allele. The filtered sites are then
 used to identify regions of each samples genome enriched with introgressed alleles. 
 
+# Installation:
+    1. Clone repository: git clone https://github.com/harris-2374/IntrogressionID.git
+    2. Create virtual enviornment (conda, virtualenv, etc.)
+    3. Install required dependencies
+        - Using pip: pip install -r requirements.txt
+    
 
 # Pipeline:
     1. Allele frequency filter
@@ -15,33 +21,33 @@ used to identify regions of each samples genome enriched with introgressed allel
 You can run IntrogressionID step-by-step using one of the six arguments below. Providing more than one argument will
  run all steps in the order they come in the pipeline. Providing no argument will run the entire pipeline start to
   finish. 
- 
-    (--allele) -- [run allele frequency filtration step]
-    (--vcf_check) -- [run secondary variant cross-check step]
-    (--count) -- [run windowed SNP counting step]
-    (--zscore) -- [run z-score distribution step]
-    (--plot) -- [plot per-sample heatmaps and manhattan plots]
-    (--alter) -- [update original vcf files]
+
+    Required:
+    --allele : [allele frequency filtration]
+    --count : [windowed SNP counting]
+    --zscore : [z-score distribution]
+    --plot : [plot per-sample heatmaps and manhattan plots]
+    --alter : [update original vcf files]
+
+    Optional:
+    --vcf_check : [secondary variant cross-check]
     
  # Input Arguments:
  
     Required arguments for all steps:
-        (--project) (-p) -- [provide a project name to organize data]
-        (--window_size) (-w) -- [sliding window size (i.e. 5bp, 5kb, 5mb)]
+        (--project, -p) : [provide a project name to organize data]
+        (--window_size, -w) : [sliding window size (i.e. 5bp, 5kb, 5mb)]
         
-    Step dependednt arguments: (refer to example commands below)
-        (--input) (-i)  -- [pathway to directory containing input vcf files broken down per-chromosome]
-        (--output) (-o) -- [output directory pathway]
-        (--reference) (-r) -- [filepath to excel sheet containing sample species information]
-        (--bed) (-b) -- [bed file with chromosome lengths]
-        (--threshold) (-t) -- [z-score threshold]
+    Step dependent arguments: (refer to example commands below)
+        (--input, -i)  : [pathway to directory containing input vcf files broken down per-chromosome]
+        (--output, -o) : [output directory pathway]
+        (--reference, -r) : [filepath to excel sheet containing sample species information]
+        (--bed, -b) : [bed file with chromosome lengths]
+        (--threshold, -t) : [z-score threshold]
  
 # Options:
-    (--auto_graph) -- [opens all graphs in the default broswer; not reccomended when running "--heatmaps"]
+    --auto_graph : [opens all graphs in the default broswer; not reccomended when running "--plot"]
 
-
-# Installation and Setup:
-    
     
 # Usage:
 
