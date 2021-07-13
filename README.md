@@ -1,5 +1,7 @@
 # IntrogressionID
-IntrogressionID is a pipeline of scripts that takes a VCF file containing variants from a population of introgressed individuals  
+IntrogressionID is a pipeline designed to identify putative sites of introgression utilizing a strict model. The basic idea behind the pipeline is to identify heterozygous sites in Bison samples
+where all cattle in the population are homozygous for the reference "cattle-like" allele, and all other Bison samples are homozygous for the alternative "bison-like" allele. The filtered sites are then
+used to identify regions of each samples genome enriched with introgressed alleles. 
 
 
 # Pipeline:
