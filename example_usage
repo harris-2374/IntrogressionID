@@ -1,0 +1,80 @@
+# ---------------------------------------------------
+# ------------------- Run test ----------------
+python unit_test
+
+
+# ---------------------------------------------------
+# ---------------- Run full pipeline ----------------
+python introgressionID.py \
+-i /test_data/chrom_data/ \
+-p Test_Project \
+-r /test_data/sample_reference_data.xlsx \
+-b /test_data/Chromosome_Lengths.bed \
+-t 5.0 \
+-w 100kb \
+-v /test_data/cattle_variants.sort2.vcf.gz
+
+
+# ---------------------------------------------------
+# ----------- Run just allele freq. filter ----------
+python introgressionID.py \
+--allele \
+-i /test_data/chrom_data/ \
+-p Test_Project \
+-r /test_data/sample_reference_data.xlsx \
+-b /test_data/Chromosome_Lengths.bed \
+-t 5.0 \
+-w 100kb \
+-v /test_data/cattle_variants.sort2.vcf.gz
+
+
+
+# ---------------------------------------------------
+# -------------- Sliding window count ---------------
+python introgressionID.py \
+--count \
+-i /test_data/chrom_data/ \
+-p Test_Project \
+-r /test_data/sample_reference_data.xlsx \
+-b /test_data/Chromosome_Lengths.bed \
+-t 5.0 \
+-w 100kb
+
+
+# ---------------------------------------------------
+# ------------------- Z-score only ------------------
+python introgressionID.py \
+--zscore \
+-i /test_data/chrom_data/ \
+-p Test_Project \
+-r /test_data/sample_reference_data.xlsx \
+-b /test_data/Chromosome_Lengths.bed \
+-t 5.0 \
+-w 100kb
+
+
+# ---------------------------------------------------
+# ------------------- Plot only ------------------
+python introgressionID.py \
+--plot \
+-i /test_data/chrom_data/ \
+-p Test_Project \
+-r /test_data/sample_reference_data.xlsx \
+-b /test_data/Chromosome_Lengths.bed \
+-t 5.0 \
+-w 100kb
+
+
+# ---------------------------------------------------
+# ------------------- Alter VCF only ----------------
+python introgressionID.py \
+--alter \
+-i /test_data/chrom_data/ \
+-p Test_Project \
+-r /test_data/sample_reference_data.xlsx \
+-b /test_data/Chromosome_Lengths.bed \
+-t 5.0 \
+-w 100kb 
+
+
+
