@@ -51,7 +51,7 @@ You can run IntrogressionID step-by-step using one of the six arguments below. P
     
 # Usage:
 
-    Example command: python introgressionID.py  [ step ] [ inputs ] [ options ]
+    Example command: python introgressionID.py  [ step ] [ options ]
     
     You can run the entire pipeline by providing no step argument:
         python introgressionID.py \

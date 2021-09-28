@@ -13,61 +13,13 @@ import pandas as pd
 import plotly
 import plotly.graph_objects as go
 
-# parser = argparse.ArgumentParser(
-#     description="This tool is used to plot HybridCheck introgressex regions on a heatmap. It also has the option"
-#                 "to compare the HybridCheck results to the IntrogressionID output Boolean file.",
-# )
-#
-# # -- Optional Arguments --
-# parser.add_argument(
-#     '--hc_input',
-#     action="store",
-#     type=str,
-#     help='HybridCheck Input file',
-# )
-# parser.add_argument(
-#     '--window_size',
-#     action="store",
-#     type=int,
-#     help='Window size',
-# )
-# parser.add_argument(
-#     '--chrom_len',
-#     action="store",
-#     type=int,
-#     help='Chromosome length bed file',
-# )
-# parser.add_argument(
-#     '--compare_to_introgressionid',
-#     action="store_true",
-#     help='Run comparison to IntrogressionID output',
-#     default=False,
-# )
-# parser.add_argument(
-#     '--introgressionid_file',
-#     action="store",
-#     type=str,
-#     help='IntrogressionID file to compare',
-# )
-# parser.add_argument(
-#     '--auto_graph',
-#     action="store_true",
-#     default=False,
-#     help='IntrogressionID file to compare',
-# )
-# args = parser.parse_args()
 
-HC_DIR = "/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_input_data/"
-WINDOW_SIZE = 100000
-CHROM_BED_FILE = "/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/Chromosome_Lengths.bed"
-COMPARE_TO_INTROGRESSIONID = True
-INTROGRESSIONID_DIR = "/home/andrewharris_2374/IntrogressionID/output_data/good_samples_fixed_100kb/zscore_boolean"
-AUTO_GRAPH = False
-
-def _make_outdirs():
-    Path("/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_output_heatmaps/").mkdir(parents=True, exist_ok=True)
-    Path("/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_IID_comparison_output_heatmaps/").mkdir(parents=True, exist_ok=True)
-    return
+def _make_outdirs(OUTPUT):
+    hc_heatmaps = OUTPUT / "HC_output_heatmaps"
+    hc_heatmaps.mkdir(parents=True, exist_ok=True)
+    hc_iid_heatmaps = OUTPUT / "HC_IID_comparison_output_heatmaps"
+    hc_iid_heatmaps.mkdir(parents=True, exist_ok=True)
+    return hc_heatmaps, hc_iid_heatmaps
 
 
 def round_up(x, window_size):
@@ -166,24 +118,7 @@ def make_plot_df(df):
     return output_df
 
 
-def plot_hc_heatmap(plot_df, sample_name, auto_graph, just_hc=True):
-    # fig = go.Figure(go.Heatmap(
-    #     x=plot_df['Position'],
-    #     y=plot_df['Chromosome'],
-    #     z=plot_df["Introgressed"],
-    #     colorscale='Viridis',
-    #     # colorscale=[
-    #     #     [0, "#440154"],
-    #     #     [1, "#fde725"]
-    #     # ],
-    #     zmin=0,
-    #     zmax=1,
-    #     ygap=0.5,
-    #     colorbar=dict(
-    #         tickvals=[0, 1],
-    #         title="Presence",
-    #     )
-    # ))
+def plot_hc_heatmap(plot_df, sample_name, hc_heatmaps, hc_iid_heatmaps, auto_graph, just_hc=True):
 
     fig = go.Figure(go.Heatmap(
         x=plot_df["Position"],
@@ -198,7 +133,6 @@ def plot_hc_heatmap(plot_df, sample_name, auto_graph, just_hc=True):
             dtick=1
         )
     ))
-
     fig.update_layout(
         title=f'{sample_name} HybridCheck Heatmap',
         yaxis_nticks=29,
@@ -219,12 +153,6 @@ def plot_hc_heatmap(plot_df, sample_name, auto_graph, just_hc=True):
             family="Arial",
             size=15,
         ),
-        # coloraxis=dict(
-        #     colorbar=dict(
-        #         tick0=0,
-        #         dtick=1
-        #     )
-        # )
     )
     fig.update_traces(showscale=False)
     fig.update_yaxes(
@@ -243,16 +171,20 @@ def plot_hc_heatmap(plot_df, sample_name, auto_graph, just_hc=True):
         mirror=True,
     )
     if just_hc:
-        html_filename = f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_output_heatmaps/html/{sample_name}_HybridCheck_heatmap.html"
-        svg_filename = f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_output_heatmaps/svg/{sample_name}_HybridCheck_heatmap.svg"
-        Path(f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_output_heatmaps/html/").mkdir(parents=True, exist_ok=True)
-        Path(f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_output_heatmaps/svg/").mkdir(parents=True, exist_ok=True)
+        html_dir = hc_heatmaps / "html"
+        html_dir.mkdir(parents=True, exist_ok=True)
+        svg_dir = hc_heatmaps / "svg"
+        svg_dir.mkdir(parents=True, exist_ok=True)
+        html_filename = html_dir / f"{sample_name}_HybridCheck_heatmap.html"
+        svg_filename = svg_dir / f"{sample_name}_HybridCheck_heatmap.svg"
     else:
-        html_filename = f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_IID_comparison_output_heatmaps/html/{sample_name}_HybridCheck_regions_in_common_heatmap.html".replace(" ", "_")
-        svg_filename = f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_IID_comparison_output_heatmaps/svg/{sample_name}_HybridCheck_regions_in_common_heatmap.svg".replace(" ", "_")
-        Path(f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_IID_comparison_output_heatmaps/html/").mkdir(parents=True, exist_ok=True)
-        Path(f"/home/andrewharris_2374/IntrogressionID/HybridCheck_IntrogressionID_comparison/HC_IID_comparison_output_heatmaps/svg/").mkdir(parents=True, exist_ok=True)
-    
+        html_dir = hc_iid_heatmaps / "html"
+        html_dir.mkdir(parents=True, exist_ok=True)
+        svg_dir = hc_iid_heatmaps / "svg"
+        svg_dir.mkdir(parents=True, exist_ok=True)
+        html_filename = html_dir / f"{sample_name}_HybridCheck_regions_in_common_heatmap.html"
+        svg_filename = svg_dir / f"{sample_name}_HybridCheck_regions_in_common_heatmap.svg"
+
     fig.write_image(svg_filename, format='svg', engine='kaleido')
     plotly.offline.plot(
         fig,
@@ -262,7 +194,7 @@ def plot_hc_heatmap(plot_df, sample_name, auto_graph, just_hc=True):
     return
 
 
-def compare_outputs(introgressionid_df, hc_df, auto_graph, sample_name):
+def compare_outputs(introgressionid_df, hc_df, auto_graph, sample_name, hc_heatmaps, hc_iid_heatmaps):
     """
     This function will compare the two dataframes and identify + plot the regions where both approaches
     identified a region as introgressed.
@@ -312,18 +244,79 @@ def compare_outputs(introgressionid_df, hc_df, auto_graph, sample_name):
     if hc_df.empty:
         return
     else:
-        plot_hc_heatmap(hc_df, f"{sample_name} IntrogressionID", auto_graph, just_hc=False)
+        plot_hc_heatmap(hc_df, f"{sample_name} IntrogressionID", hc_heatmaps, hc_iid_heatmaps, auto_graph, just_hc=False)
     return
 
 
-def plot_hybridcheck_heatmap(input_file, window_size, chromosome_length_bed_file, compare_files, file_to_compare, auto_graph):
-    # Make output directories
-    _make_outdirs()
-
+def plot_hybridcheck_heatmap():
+    
+    parser = argparse.ArgumentParser(
+        description="This tool is used to plot HybridCheck introgressex regions on a heatmap. It also has the option"
+                    "to compare the HybridCheck results to the IntrogressionID output Boolean file.",
+    )
+    
+    # -- Optional Arguments --
+    parser.add_argument(
+        '--output',
+        action="store",
+        type=str,
+        help='Output location for graphs',
+    )
+    parser.add_argument(
+        '--hc_input',
+        action="store",
+        type=str,
+        help='HybridCheck Input file',
+    )
+    parser.add_argument(
+        '--window_size',
+        action="store",
+        type=int,
+        help='Window size',
+    )
+    parser.add_argument(
+        '--chrom_len',
+        action="store",
+        type=int,
+        help='Chromosome length bed file',
+    )
+    parser.add_argument(
+        '--compare_to_introgressionid',
+        action="store_true",
+        help='Run comparison to IntrogressionID output',
+        default=False,
+    )
+    parser.add_argument(
+        '--introgressionid_file',
+        action="store",
+        type=str,
+        help='IntrogressionID file to compare',
+    )
+    parser.add_argument(
+        '--auto_graph',
+        action="store_true",
+        default=False,
+        help='IntrogressionID file to compare',
+    )
+    args = parser.parse_args()
+    # -- Input variables --
+    input_file = args.hc_input
+    window_size = args.window_size
+    chromosome_length_bed_file = args.chrom_len
+    compare_files = args.compare_to_introgressionid
+    file_to_compare = args.introgressionid_file
+    auto_graph = args.auto_graph
+    try:
+        OUTPUT = Path(args.output)
+    except FileNotFoundError:
+        print("Output location cannot be found... check and rerun")
+        exit(1)
+    # -- Make output directories --
+    hc_heatmaps, hc_iid_heatmaps = _make_outdirs(OUTPUT)
+    # -- Set info --
     sample_name = Path(input_file).stem.split("_")[0]
     file_df = pd.read_csv(input_file, sep="\t")
-
-    # Load in chromosome bed file information
+    # -- Load in chromosome bed file information --
     read_chromosome_bed_file = pd.read_csv(
         chromosome_length_bed_file,
         sep="\t",
@@ -334,44 +327,19 @@ def plot_hybridcheck_heatmap(input_file, window_size, chromosome_length_bed_file
     )
     longest_chromosome = read_chromosome_bed_file["length"].max()
     number_of_chromosomes = len(read_chromosome_bed_file["chromosome"])
-
     added_plot_column = add_plotting_column(file_df)
     extended_df = extend_position_data(added_plot_column, window_size, longest_chromosome, number_of_chromosomes)
     nan_fixed_df = set_nan(extended_df, read_chromosome_bed_file)
-
     plot_df = make_plot_df(nan_fixed_df)
-
-    # If comparing HC and IID results, run through this IF statement
+    # -- Compare HC and IID results if requested --
     if compare_files:
         read_introgressionid_file = pd.read_csv(file_to_compare, sep="\t", index_col=[0])
-        compare_outputs(read_introgressionid_file, plot_df.copy(), auto_graph, sample_name)
+        compare_outputs(read_introgressionid_file, plot_df.copy(), auto_graph, sample_name, hc_heatmaps, hc_iid_heatmaps)
         pass
-
-    # Plot heatmap for only HybridCheck data and output
-    plot_hc_heatmap(plot_df, sample_name, auto_graph)
+    # -- Plot heatmap for only HybridCheck data and output --
+    plot_hc_heatmap(plot_df, sample_name, hc_heatmaps, hc_iid_heatmaps, auto_graph)
     return
 
 
 if __name__ == '__main__':
-    # This is what I ran to compare the two datasets. The normal script will only take in a single comparison at once.
-    hc_input_files = [f for f in Path(HC_DIR).iterdir() if f.is_file() and (f.stem[0] != ".")]
-    iid_input_files = [f for f in Path(INTROGRESSIONID_DIR).iterdir() if f.is_file() and (f.stem[0] != ".")]
-    for hc_file in hc_input_files:
-        for iid_file in iid_input_files:
-            if hc_file.stem.split("_")[0].replace("_", "") in iid_file.stem.replace("_", ""):
-                plot_hybridcheck_heatmap(hc_file, WINDOW_SIZE, CHROM_BED_FILE, COMPARE_TO_INTROGRESSIONID, iid_file, AUTO_GRAPH)
-            else:
-                continue
-
-    # ==========================================================================================================================
-
-    # plot_hybridcheck_heatmap(
-    #     args.hc_input,
-    #     args.window_size,
-    #     args.chrom_len,
-    #     args.compare_to_introgressionid,
-    #     args.introgressionid_file,
-    #     args.auto_graph,
-    # )
-    
-
+    plot_hybridcheck_heatmap()

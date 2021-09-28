@@ -295,7 +295,8 @@ def zscore_distribution(
     results to obtain a z-score cut-off to use as the significance threshold.
     """
     # Initiate zscore_distribution log file
-    logging.basicConfig(filename=F'logs/{project}_{window_size_str}_zscore_distribution.log', level=logging.INFO, filemode='w', format='')
+    log_file = Path(output_directory) / f'{project}_{window_size_str}/logs/{project}_{window_size_str}_zscore_distribution.log'
+    logging.basicConfig(filename=log_file, level=logging.INFO, filemode='w', format='')
     logging.info('')
     logging.info("|---- Running Z-score Distribution ---- ")
     logging.info('')

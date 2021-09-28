@@ -1,16 +1,17 @@
 import argparse
-from datetime import datetime
 import glob
 import logging
 import os
-from pathlib import Path
 import shutil
+
+from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 import vcf  # pyvcf
 
 from src import allele_frequency_filter, windowed_snp_counter
-from src import zscore_distribution, vcf_cross_check
+from src import zscore_distribution, cattle_vcf_check
 from src import plot, alter_original_vcf
 
 logger = logging.getLogger(__name__)
@@ -30,26 +31,20 @@ def init_logger(log_filename):
 def output_directory_setup(output_directory, project, window_size_str):
     # Make log output directory
     Path(f"{output_directory}/{project}_{window_size_str}/logs").mkdir(parents=True, exist_ok=True)
-
     # Allele Frequency Filter output
     Path(f"{output_directory}/{project}_{window_size_str}/candidate_sites").mkdir(parents=True, exist_ok=True)
-
     # VCF_Check output
     Path(f"{output_directory}/{project}_{window_size_str}/dropped_snp_info").mkdir(parents=True, exist_ok=True)
-
     # Windowed SNP counter output
     Path(f"{output_directory}/{project}_{window_size_str}/windowed_snp_counts").mkdir(parents=True, exist_ok=True)
-
     # Z-score dfistribution outputs
     Path(f"{output_directory}/{project}_{window_size_str}/zscore_distribution").mkdir(parents=True, exist_ok=True)
     Path(f"{output_directory}/{project}_{window_size_str}/zscore_boolean").mkdir(parents=True, exist_ok=True)
-
     # Make project figures output directories
     Path(f"{output_directory}/{project}_{window_size_str}/figures/z_score_distributions/").mkdir(parents=True, exist_ok=True)
     Path(f"{output_directory}/{project}_{window_size_str}/figures/z_score_manhattan_plots").mkdir(parents=True, exist_ok=True)
     Path(f"{output_directory}/{project}_{window_size_str}/figures/z_score_heatmaps/html").mkdir(parents=True, exist_ok=True)
     Path(f"{output_directory}/{project}_{window_size_str}/figures/z_score_heatmaps/svg").mkdir(parents=True, exist_ok=True)
-
     # Output stats
     Path(f"{output_directory}/{project}_{window_size_str}/stats/").mkdir(parents=True, exist_ok=True)
     return
@@ -279,8 +274,6 @@ def introgression_id():
         # Colelct chromosome VCF files
         chromosome_files = [Path(f) for f in listdir_nohidden(input_directory)]
         for chrom_file in chromosome_files:
-            print()
-            print(f"|---- Running AAF for {chrom_file.name} ---- ")
             # Log which chromosome is being run currently
             logger.info(f"--- Running {chrom_file.name} ---")
             # Pull chromosome name from file
@@ -358,7 +351,7 @@ def introgression_id():
             print()
         vcf_output_location = f"{output_directory}/{project}_{window_size_str}/candidate_sites/" \
                             f"candidate_site_counts.tsv"
-        vcf_stats_df = pd.DataFrame(data=vcf_output_location)
+        vcf_stats_df = pd.DataFrame(data=vcf_file_stats)
         vcf_stats_df.to_csv(vcf_output_location, sep='\t')
         pass
     # Cross check filter1 output to additional variant file
@@ -384,7 +377,7 @@ def introgression_id():
         introgressed_output_dir = Path(f"{output_directory}/{project}_{window_size_str}/candidate_sites/")        
         # load in vcf file
         vcf_reader = vcf.Reader(filename=cattle_vcf_file.as_posix())
-        vcf_cross_check.vcf_check(
+        cattle_vcf_check.vcf_check(
             candidate_positions_files,
             vcf_reader,
             introgressed_output_dir,

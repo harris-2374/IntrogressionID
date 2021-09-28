@@ -4,16 +4,13 @@ import logging
 def filter1(tally_dict, num_bison, num_cattle):
     """
     This function will filter the data based on...
-            1. More than 0 water buffalo (out group) called
-            2. More than 0 homozygous alternative cows -> could indicate common ancestry
-            3. More than 0 heterozygous cows
-            4. Heterozygous bison frequency less than 30% of total called bison.
+            1. More than 0 homozygous alternative cows -> could indicate common ancestry
+            2. More than 0 heterozygous cows
+            3. Heterozygous bison frequency less than 30% of total called bison.
     @param tally_dict: Dictionary containing the records tally of genotypic frequencies of the samples.
     @return: True if the tally dict passes all checks, False if it does not pass all checks.
     """
     try:
-        # No water buffalo (outgroup) called
-        assert(tally_dict['total_wb'] == 0)
         # Initial REJECT if less than 30% of cows are called. ***
         assert(tally_dict['total_cows_called'] / num_cattle > 0.3)
         # Fix ZeroDivisionError
