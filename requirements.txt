@@ -19,7 +19,6 @@ mypy-extensions==0.4.3
 numpy==1.19.1
 pandas==1.1.0
 pathspec==0.8.0
-Pillow==7.2.0
 plotly==4.10.0
 pycodestyle==2.6.0
 pyparsing==2.4.7
