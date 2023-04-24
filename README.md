@@ -46,7 +46,7 @@ You can run IntrogressionID step-by-step using one of the six arguments below. P
         (--threshold, -t) : [z-score threshold]
  
 # Options:
-    --auto_graph : [opens all graphs in the default broswer; not reccomended when running "--plot"]
+    --auto_graph : [opens all graphs in the default broswer; not recommended when running "--plot"]
 
     
 # Usage:
